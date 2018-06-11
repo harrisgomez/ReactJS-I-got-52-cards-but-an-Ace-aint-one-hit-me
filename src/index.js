@@ -12,7 +12,9 @@ class Card extends React.Component {
     render() {
         return (
             <div>
-                <button className="top-card"></button>
+                <button className="top-card" onClick={() => this.props.onClick()}>
+                    {this.props.value}
+                </button>
             </div>
         );
     }
@@ -22,16 +24,41 @@ class Deck extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            deck: Array(52)
+            deck: []
         };
     }
-    orderedDeck() {
+    generateDeck() {
         const deck = this.state.deck.slice();
+        const value = [
+            'A', '2', '3', '4', '5',
+            '6', '7', '8', '9', '10',
+            'J', 'Q', 'K'
+        ];
+        const suit = ['♠', '♣', '♦', '♥'];
+        for(var v = 0; v < value.length; v++) {
+            for(var s = 0; s < suit.length; s++) {
+                var card = {};
+                card.value = value[v];
+                card.suit = suit[s];
+                deck.push(card);
+            }
+        }
+        console.log(deck);
+    }
+    // When user clicks, order the deck and show top card
+    handleClick() {
+        this.generateDeck();
+    }
+    orderedDeck(deck) {
+
+    }
+    renderCard() {
+
     }
     render() {
         return (
             <div>
-                <Card />
+                <Card value={this.state.deck[0]} onClick={() => this.handleClick()} />
             </div>
         );
     }
