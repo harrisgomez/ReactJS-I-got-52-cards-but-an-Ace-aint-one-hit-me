@@ -72,7 +72,7 @@ class Table extends React.Component {
     }
 
     createDeck() {
-        const deck = [];
+        const deck = this.state.deck;
         const value = [
             'K', 'Q', 'J', '10', '9',
             '8', '7', '6', '5', '4',
@@ -91,8 +91,9 @@ class Table extends React.Component {
     }
 
     drawCard() {
-        console.log(this.state.deck.pop());
-        // this.setState({hand: this.state.deck})
+        const hand = this.state.hand;
+        hand.push(this.state.deck.pop());
+        this.setState({hand: hand});
     }
 
     render() {
