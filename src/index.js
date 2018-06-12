@@ -67,6 +67,29 @@ class Deck extends React.Component {
     }
 }
 
+function Alert() {
+    return (
+        <div>
+            <div id="shuffle-alert">
+                <div className="alert alert-primary" role="alert" >
+                    Cards have been SHUFFLED!
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function Headers() {
+    return (
+        <div>
+            <div className="headers">
+                <h1>Deck</h1>
+                <h1>Your Hand</h1>
+            </div>
+        </div>
+    )
+}
+
 class Table extends React.Component {
     constructor(props) {
         super(props);
@@ -136,15 +159,8 @@ class Table extends React.Component {
     render() {
         return (
             <div className="table">
-                <div id="shuffle-alert">
-                    <div className="alert alert-primary" role="alert" >
-                        This is a primary alert—check it out!
-                    </div>
-                </div>
-                <div className="headers">
-                    <h1>Deck</h1>
-                    <h1>Your Hand</h1>
-                </div>
+                <Alert />
+                <Headers />
                 <div className="dealer">
                     <div className="deck">
                         <Deck onClick={() => this.drawCard(this.state.deck)} />
