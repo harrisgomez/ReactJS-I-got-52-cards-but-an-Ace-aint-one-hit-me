@@ -2,21 +2,39 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-function Hand(props) {
-    const card = JSON.stringify(props.value[props.value.length - 1]);
-    console.log(card);
-    return (
-        <div>
-            <div className="pulled-card">{card}</div>
-        </div>
-    );
+class Hand extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+
+        }
+    };
+    render() {
+        console.log(this.props.card);
+        return (
+            <div>
+                {/*Stringified because won't cooperate with me for now*/}
+                <div className="pulled-card"><h5>{JSON.stringify(this.props.card)}</h5></div>
+            </div>
+        );
+    }
 }
+
+// function Hand(props) {
+//     // const card = JSON.stringify(props.card);
+//     console.log(props.card);
+//     return (
+//         <div>
+//             <div className="pulled-card">{JSON.stringify(props.card)}</div>
+//         </div>
+//     );
+// }
 
 class Card extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            showTop: false
+
         };
     }
 
@@ -54,7 +72,8 @@ class Table extends React.Component {
         super(props);
         this.state = {
             deck: [],
-            hand: []
+            hand: [],
+            alert: false
         };
     }
 
@@ -69,7 +88,7 @@ class Table extends React.Component {
             '8', '7', '6', '5', '4',
             '3', '2', 'A'
         ];
-        const suit = ['♠', '♣', '♦', '♥'];
+        const suit = ['♥', '♦', '♣', '♠'];
         for(var v = 0; v < value.length; v++) {
             for(var s = 0; s < suit.length; s++) {
                 var card = {};
@@ -88,12 +107,40 @@ class Table extends React.Component {
             deck: deck,
             hand: hand
         });
-        console.log(this.state.deck);
+    }
+
+    shuffleDeck() {
+        const deck = this.state.deck;
+        let remainingCards = deck.length;
+        let temp;
+        let i;
+        while(remainingCards > 0) {
+            i = Math.floor(Math.random() * remainingCards);
+            remainingCards--;
+            temp = deck[remainingCards];
+            deck[remainingCards] = deck[i];
+            deck[i] = temp;
+        }
+        this.setState({
+            deck: deck,
+            alert: true
+        });
+        if(alert) {
+            document.getElementById("shuffle-alert").style.display = "flex";
+            setTimeout(function() {
+                document.getElementById("shuffle-alert").style.display = "none";
+            }, 2000);
+        }
     }
 
     render() {
         return (
             <div className="table">
+                <div id="shuffle-alert">
+                    <div className="alert alert-primary" role="alert" >
+                        This is a primary alert—check it out!
+                    </div>
+                </div>
                 <div className="headers">
                     <h1>Deck</h1>
                     <h1>Your Hand</h1>
@@ -103,11 +150,16 @@ class Table extends React.Component {
                         <Deck onClick={() => this.drawCard(this.state.deck)} />
                     </div>
                     <div className="cards">
-                        <Hand value={this.state.hand} />
+                        <Hand card={this.state.hand[this.state.hand.length - 1]} />
                     </div>
                 </div>
                 <div className="action">
-                    <button className="shuffle btn btn-warning">Shuffle Deck</button>
+                    <button
+                        className="shuffle btn btn-warning"
+                        onClick={() => this.shuffleDeck()}
+                    >
+                        Shuffle Deck
+                    </button>
                 </div>
             </div>
         );
