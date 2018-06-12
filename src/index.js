@@ -2,6 +2,25 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+class Hand extends React.Component {;
+    constructor(props) {
+        super(props);
+        this.state = {
+            hand: []
+        };
+    }
+
+    render() {
+        let handLength = this.state.hand.length;
+        let topCard = this.state.hand[handLength - 1];
+        return (
+            <div>
+                <Card />
+            </div>
+        );
+    }
+}
+
 class Card extends React.Component {
     constructor(props) {
         super(props);
@@ -9,6 +28,7 @@ class Card extends React.Component {
             showTop: false
         };
     }
+
     render() {
         return (
             <div>
@@ -24,15 +44,39 @@ class Deck extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            deck: []
+            deck: [],
+            hand: []
         };
     }
-    generateDeck() {
-        const deck = this.state.deck.slice();
+
+    render() {
+        return (
+            <div>
+                <Card onClick={() => this.props.onClick()} />
+            </div>
+        );
+    }
+}
+
+class Table extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            deck: [],
+            hand: []
+        };
+    }
+
+    componentDidMount() {
+        this.setState({deck: this.createDeck()});
+    }
+
+    createDeck() {
+        const deck = [];
         const value = [
-            'A', '2', '3', '4', '5',
-            '6', '7', '8', '9', '10',
-            'J', 'Q', 'K'
+            'K', 'Q', 'J', '10', '9',
+            '8', '7', '6', '5', '4',
+            '3', '2', 'A'
         ];
         const suit = ['♠', '♣', '♦', '♥'];
         for(var v = 0; v < value.length; v++) {
@@ -43,68 +87,35 @@ class Deck extends React.Component {
                 deck.push(card);
             }
         }
-        console.log(deck);
+        return deck;
     }
-    // When user clicks, order the deck and show top card
-    handleClick() {
-        this.generateDeck();
-    }
-    orderedDeck(deck) {
 
+    drawCard() {
+        console.log(this.state.deck.pop());
+        // this.setState({hand: this.state.deck})
     }
-    renderCard() {
 
-    }
     render() {
         return (
-            <div>
-                <Card value={this.state.deck[0]} onClick={() => this.handleClick()} />
+            <div className="table">
+                <div className="headers">
+                    <h1>Deck</h1>
+                    <h1>Your Hand</h1>
+                </div>
+                <div className="dealer">
+                    <div className="deck">
+                        <Deck onClick={() => this.drawCard()} />
+                    </div>
+                    <div className="cards">
+                        <Hand />
+                    </div>
+                </div>
+                <div className="action">
+                    <button className="shuffle btn btn-warning">Shuffle Deck</button>
+                </div>
             </div>
         );
     }
-}
-
-class Hand extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            hand: []
-        };
-    }
-    render() {
-        let handLength = this.state.hand.length;
-        let topCard = this.state.hand[handLength - 1];
-        return (
-            <div>
-                <h1>{topCard}</h1>
-            </div>
-        );
-    }
-}
-
-class Table extends React.Component {
-  render() {
-    return (
-      <div className="table">
-        <div className="headers">
-            <h1>Deck</h1>
-            <h1>Your Card</h1>
-        </div>
-        <div className="dealer">
-            <div className="deck">
-                <Deck />
-            </div>
-            <div className="cards">
-                <Hand />
-            </div>
-        </div>
-        <div className="action">
-            <button type="button" className="order btn btn-info">Fresh Deck</button>
-            <button className="shuffle btn btn-warning">Shuffled Deck</button>
-        </div>
-      </div>
-    );
-  }
 }
 
 ReactDOM.render(<Table />, document.getElementById('root'));

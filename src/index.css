@@ -24,8 +24,8 @@
 }
 .action {
     display: flex;
+    justify-content: center;
 }
 .action button {
-    margin-left: 30px;
     margin-top: 20px;
 }
