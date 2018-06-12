@@ -2,23 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-class Hand extends React.Component {;
-    constructor(props) {
-        super(props);
-        this.state = {
-            hand: []
-        };
-    }
-
-    render() {
-        let handLength = this.state.hand.length;
-        let topCard = this.state.hand[handLength - 1];
-        return (
-            <div>
-                <Card />
-            </div>
-        );
-    }
+function Hand(props) {
+    const card = JSON.stringify(props.value[props.value.length - 1]);
+    console.log(card);
+    return (
+        <div>
+            <div className="pulled-card">{card}</div>
+        </div>
+    );
 }
 
 class Card extends React.Component {
@@ -90,10 +81,14 @@ class Table extends React.Component {
         return deck;
     }
 
-    drawCard() {
+    drawCard(deck) {
         const hand = this.state.hand;
-        hand.push(this.state.deck.pop());
-        this.setState({hand: hand});
+        hand.push(deck.pop());
+        this.setState({
+            deck: deck,
+            hand: hand
+        });
+        console.log(this.state.deck);
     }
 
     render() {
@@ -105,10 +100,10 @@ class Table extends React.Component {
                 </div>
                 <div className="dealer">
                     <div className="deck">
-                        <Deck onClick={() => this.drawCard()} />
+                        <Deck onClick={() => this.drawCard(this.state.deck)} />
                     </div>
                     <div className="cards">
-                        <Hand />
+                        <Hand value={this.state.hand} />
                     </div>
                 </div>
                 <div className="action">
