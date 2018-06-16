@@ -3,41 +3,17 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 class Hand extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-
-        }
-    };
     render() {
-        console.log(this.props.card);
         return (
             <div>
-                {/*Stringified because won't cooperate with me for now*/}
-                <div className="pulled-card"><h5>{JSON.stringify(this.props.card)}</h5></div>
+                <div><h5>{this.props.hand.value}</h5></div>
+                <div className='suit'><h1>{this.props.hand.suit}</h1></div>
             </div>
         );
     }
 }
 
-// function Hand(props) {
-//     // const card = JSON.stringify(props.card);
-//     console.log(props.card);
-//     return (
-//         <div>
-//             <div className="pulled-card">{JSON.stringify(props.card)}</div>
-//         </div>
-//     );
-// }
-
 class Card extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-
-        };
-    }
-
     render() {
         return (
             <div>
@@ -50,14 +26,6 @@ class Card extends React.Component {
 }
 
 class Deck extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            deck: [],
-            hand: []
-        };
-    }
-
     render() {
         return (
             <div>
@@ -94,58 +62,60 @@ class Table extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            deck: [],
+            deck: this.createDeck(),
             hand: [],
             alert: false
         };
     }
 
-    componentDidMount() {
-        this.setState({deck: this.createDeck()});
-    }
-
-    createDeck() {
-        const deck = this.state.deck;
-        const value = [
+    createDeck = () => {
+        const DECK = [];
+        const VALUE = [
             'K', 'Q', 'J', '10', '9',
             '8', '7', '6', '5', '4',
             '3', '2', 'A'
         ];
-        const suit = ['♥', '♦', '♣', '♠'];
-        for(var v = 0; v < value.length; v++) {
-            for(var s = 0; s < suit.length; s++) {
-                var card = {};
-                card.value = value[v];
-                card.suit = suit[s];
-                deck.push(card);
+        const SUIT = ['♥', '♦', '♣', '♠'];
+
+        for(let v = 0; v < VALUE.length; v++) {
+            for(let s = 0; s < SUIT.length; s++) {
+                const CARD = {};
+                CARD.value = VALUE[v];
+                CARD.suit = SUIT[s];
+                DECK.push(CARD);
             }
         }
-        return deck;
+
+        return DECK;
     }
 
-    drawCard(deck) {
-        const hand = this.state.hand;
-        hand.push(deck.pop());
+    drawCard = (deck_remaining) => {
+        const DECK_REMAINING = deck_remaining;
+        const HAND = this.state.hand;
+
+        HAND.push(DECK_REMAINING.pop());
+
         this.setState({
-            deck: deck,
-            hand: hand
+            deck: DECK_REMAINING,
+            hand: HAND
         });
+        console.log('current hand', this.state.hand);
     }
 
-    shuffleDeck() {
-        const deck = this.state.deck;
-        let remainingCards = deck.length;
+    shuffleDeck = () => {
+        const DECK = this.state.deck;
+        let remainingCards = DECK.length;
         let temp;
         let i;
         while(remainingCards > 0) {
             i = Math.floor(Math.random() * remainingCards);
             remainingCards--;
-            temp = deck[remainingCards];
-            deck[remainingCards] = deck[i];
-            deck[i] = temp;
+            temp = DECK[remainingCards];
+            DECK[remainingCards] = DECK[i];
+            DECK[i] = temp;
         }
         this.setState({
-            deck: deck,
+            deck: DECK,
             alert: true
         });
         if(alert) {
@@ -157,16 +127,18 @@ class Table extends React.Component {
     }
 
     render() {
+        const DECK_REMAINING = this.state.deck;
+
         return (
             <div className="table">
                 <Alert />
                 <Headers />
                 <div className="dealer">
                     <div className="deck">
-                        <Deck onClick={() => this.drawCard(this.state.deck)} />
+                        <Deck onClick={() => this.drawCard(DECK_REMAINING)} />
                     </div>
                     <div className="cards">
-                        <Hand card={this.state.hand[this.state.hand.length - 1]} />
+                        <Hand hand={this.state.deck[this.state.deck.length - 1]} />
                     </div>
                 </div>
                 <div className="action">
