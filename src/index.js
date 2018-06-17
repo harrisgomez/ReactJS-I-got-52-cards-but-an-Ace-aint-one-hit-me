@@ -4,6 +4,7 @@ import './index.css';
 
 class Hand extends React.Component {
     render() {
+        console.log(this.props.hand);
         return (
             <div>
                 <div><h5>{this.props.hand.value}</h5></div>
@@ -63,9 +64,38 @@ class Table extends React.Component {
         super(props);
         this.state = {
             deck: this.createDeck(),
-            hand: [],
-            alert: false
+            hand: [{suit: null, value: null}],
+            alert: false,
+            originalDeck: []
         };
+    }
+
+    // How do we shuffle deck and reset? Preserve original state via Singleton?
+    componentDidMount() {
+        const GET_INITIAL_DECK_STATE = (function() {
+            let INSTANCE;
+            const INIT = () => {
+                const INITIAL_DECK_STATE = this.state.deck;
+                return {
+                    getInitialState: function() {
+                        return INITIAL_DECK_STATE;
+                    }
+                };
+            };
+
+            return {
+                getInstance: function() {
+                    if(!INSTANCE) {
+                        INSTANCE = INIT();
+                    }
+                    return INSTANCE;
+                }
+            };
+        }.bind(this))();
+        const ORIGINAL_DECK = GET_INITIAL_DECK_STATE.getInstance();
+
+        this.setState({originalDeck: ORIGINAL_DECK});
+        console.log('original deck', this.state.originalDeck);
     }
 
     createDeck = () => {
@@ -95,14 +125,25 @@ class Table extends React.Component {
 
         HAND.push(DECK_REMAINING.pop());
 
+        if(!DECK_REMAINING[0]) {
+            let topDeck = document.getElementsByClassName("top-card");
+            topDeck[0].style.background = "red";
+            return;
+        }
+
+        if(HAND[1]) {
+            let topHand = document.getElementsByClassName("cards");
+            topHand[0].style.background = "white";
+        }
+
         this.setState({
             deck: DECK_REMAINING,
             hand: HAND
         });
-        console.log('current hand', this.state.hand);
     }
 
     shuffleDeck = () => {
+        this.getInitialState();
         const DECK = this.state.deck;
         let remainingCards = DECK.length;
         let temp;
@@ -128,6 +169,8 @@ class Table extends React.Component {
 
     render() {
         const DECK_REMAINING = this.state.deck;
+        const PULLED_CARD = this.state.hand[this.state.hand.length - 1];
+        console.log(PULLED_CARD);
 
         return (
             <div className="table">
@@ -138,7 +181,7 @@ class Table extends React.Component {
                         <Deck onClick={() => this.drawCard(DECK_REMAINING)} />
                     </div>
                     <div className="cards">
-                        <Hand hand={this.state.deck[this.state.deck.length - 1]} />
+                        <Hand hand={PULLED_CARD} />
                     </div>
                 </div>
                 <div className="action">
